@@ -1,6 +1,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include <iostream>
 #include <math.h>
 
 class Vec3 
@@ -12,9 +13,13 @@ class Vec3
         Vec3() : e{0, 0, 0} {}
         Vec3(double x, double y, double z) : e{x, y, z} {}
 
-        std::ostream& operator<<(std::ostream& os) const
+        double x() const { return e[0]; }
+        double y() const { return e[1]; }
+        double z() const { return e[2]; }
+
+        friend std::ostream& operator<<(std::ostream& os, const Vec3& v)
         {
-            os << "Vec3(" << e[0] << ", " << e[1] << ", " << e[2] << ")";
+            os << "Vec3(" << v.e[0] << ", " << v.e[1] << ", " << v.e[2] << ")";
             return os;
         }
 
@@ -93,6 +98,6 @@ class Vec3
         {
             return *this / this->Length();
         }
-}
+};
 
 #endif
