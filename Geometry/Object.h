@@ -2,13 +2,16 @@
 #define OBJECT_HPP
 
 #include "helper/Vec3.h"
+#include "helper/Ray.h"
 
 namespace Geometry
 {
     class Object
     {
-    private:
+    protected:
         Vec3 position;
+
+        virtual bool Hit(Ray r) = 0;
 
     public:
         Object() {}

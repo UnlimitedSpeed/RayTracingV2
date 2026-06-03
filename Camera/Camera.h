@@ -1,9 +1,11 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include <vector>
 #include "helper/Vec3.h"
 #include "helper/Ray.h"
 #include "helper/Colour.h"
+#include "Geometry/Object.h"
 
 class Camera
 {
@@ -26,9 +28,9 @@ public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};
 
-    Colour RayColour(const Ray& ray);
+    Colour RayColour(const Ray& ray, std::vector<Geometry::Object*> objs);
     Ray GetRay(int h, int w);
-    void Render();
+    void Render(std::vector<Geometry::Object*> objs);
 };
 
 #endif

@@ -21,7 +21,7 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
     this->pixel0Location = viewportUpperLeft + pixelDeltaU / 2 + pixelDeltaV / 2;
 }
 
-Colour Camera::RayColour(const Ray& ray)
+Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object*> objs)
 {
     // Background colour
     const Vec3 direction = ray.GetDirection();
@@ -33,22 +33,22 @@ Colour Camera::RayColour(const Ray& ray)
 
 Ray Camera::GetRay(int w, int h)
 {
-    Vec3 pixelCenter = pixel0Location + w * pixelDeltaU + h  * pixelDeltaV;
+    Vec3 pixelCenter = pixel0Location + w * pixelDeltaU + h * pixelDeltaV;
     Vec3 rayDirection = pixelCenter - position;
     return Ray(this->position, rayDirection);
 }
 
-void Camera::Render()
+void Camera::Render(std::vector<Geometry::Object*> objs)
 {
     std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
+
     for (int h = 0; h < imageHeight; h++)
     {
         for (int w = 0; w < imageWidth; w++)
         {
             Ray ray = GetRay(w, h);
-            Colour pixelColour = RayColour(ray);
+            Colour pixelColour = RayColour(ray, objs);
             pixelColour.WriteColour(std::cout);
         }
     }
-    
 }
