@@ -8,7 +8,7 @@ class Colour
 private:
     double colour[3];
 
-    int ClampValue(int value) const
+    double ClampValue(double value) const
     {
         if (value > 255)
         {
@@ -32,15 +32,15 @@ public:
 
     void WriteColour(std::ostream &out)
     {
-        out << colour[0] << " " << colour[1] << " " << colour[2] << "\n";
+        out << ClampValue(colour[0]) << " " << ClampValue(colour[1]) << " " << ClampValue(colour[2]) << "\n";
     }
 
     Colour operator+(const Colour &c) const
     {
         return Colour(
-            ClampValue(colour[0] + c.colour[0]),
-            ClampValue(colour[1] + c.colour[1]),
-            ClampValue(colour[2] + c.colour[2]));
+            colour[0] + c.colour[0],
+            colour[1] + c.colour[1],
+            colour[2] + c.colour[2]);
     }
 
     Colour operator+=(const Colour &c)
@@ -49,19 +49,15 @@ public:
         colour[1] += c.colour[1];
         colour[2] += c.colour[2];
 
-        ClampValue(colour[0]);
-        ClampValue(colour[1]);
-        ClampValue(colour[2]);
-
         return *this;
     }
 
     Colour operator-(const Colour &c) const
     {
         return Colour(
-            ClampValue(colour[0] - c.colour[0]),
-            ClampValue(colour[1] - c.colour[1]),
-            ClampValue(colour[2] - c.colour[2]));
+            colour[0] - c.colour[0],
+            colour[1] - c.colour[1],
+            colour[2] - c.colour[2]);
     }
 
     Colour operator-=(const Colour &c)
@@ -69,10 +65,6 @@ public:
         colour[0] -= c.colour[0];
         colour[1] -= c.colour[1];
         colour[2] -= c.colour[2];
-
-        ClampValue(colour[0]);
-        ClampValue(colour[1]);
-        ClampValue(colour[2]);
 
         return *this;
     }
@@ -83,18 +75,15 @@ public:
         double g = ((colour[1] / 255) * (c.colour[1] / 255)) * 255;
         double b = ((colour[2] / 255) * (c.colour[2] / 255)) * 255;
 
-        return Colour(
-            ClampValue(r),
-            ClampValue(g),
-            ClampValue(b));
+        return Colour(r, g, b);
     }
 
     Colour operator*(const double t) const
     {
         return Colour(
-            ClampValue(colour[0] * t),
-            ClampValue(colour[1] * t),
-            ClampValue(colour[2] * t));
+            colour[0] * t,
+            colour[1] * t,
+            colour[2] * t);
     }
 
     friend Colour operator*(const double t, const Colour &c)
