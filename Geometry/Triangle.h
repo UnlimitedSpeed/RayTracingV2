@@ -8,17 +8,17 @@ namespace Geometry
 {
     class Triangle : public Object
     {
-        private:
-            Vec3 p1;
-            Vec3 p2;
-            Vec3 p3;
+    private:
+        Vec3 p1;
+        Vec3 p2;
+        Vec3 p3;
 
-        public:
-            Triangle(Vec3 p1, Vec3 p2, Vec3 p3) : p1(p1), p2(p2), p3(p3) {}
-            Vec3 GetNormal() const 
-            {
-                return (p2 - p1).Cross(p3 - p1).UnitVector();
-            }
+    public:
+        Triangle(Vec3 p1, Vec3 p2, Vec3 p3) : p1(p1), p2(p2), p3(p3) {}
+        Vec3 GetNormal() const
+        {
+            return (p2 - p1).Cross(p3 - p1).UnitVector();
+        }
     };
 }
 

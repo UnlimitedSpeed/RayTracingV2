@@ -7,11 +7,11 @@ namespace Geometry
 {
     class Object
     {
-        private:
-            Vec3 position;
+    private:
+        Vec3 position;
 
-        public:
-            Object() {}
+    public:
+        Object() {}
     };
 }
 

@@ -24,5 +24,4 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
 
 void Camera::Render()
 {
-    
 }

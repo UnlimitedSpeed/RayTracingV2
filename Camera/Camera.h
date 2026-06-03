@@ -19,6 +19,7 @@ private:
     Vec3 pixelDeltaV;
     Vec3 viewportUpperLeft;
     Vec3 pixel0Location;
+
 public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};
