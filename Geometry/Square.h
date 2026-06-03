@@ -1,5 +1,5 @@
-#ifndef SQUARE_H
-#define SQUARE_H
+#ifndef SQUARE_HPP
+#define SQUARE_HPP
 
 #include "helper/Vec3.h"
 #include "Object.h"

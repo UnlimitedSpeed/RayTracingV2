@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef OBJECT_HPP
+#define OBJECT_HPP
 
 #include "helper/Vec3.h"
 
