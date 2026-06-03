@@ -1,0 +1,27 @@
+CXX      := g++
+CXXFLAGS := -std=c++17 -Wall -Wextra -I.
+LDFLAGS  :=
+
+BUILD_DIR := build
+TARGET    := $(BUILD_DIR)/raytracer
+
+# All .cpp files under the project (excluding build output)
+SRCS := $(shell find . -name '*.cpp' -not -path './$(BUILD_DIR)/*')
+OBJS := $(patsubst ./%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+.PHONY: all clean
+
+all: $(TARGET)
+
+render: $(TARGET)
+	./$(TARGET) > out.ppm
+
+$(TARGET): $(OBJS)
+	@mkdir -p $(dir $@)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+
+$(BUILD_DIR)/%.o: ./%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -rf $(BUILD_DIR)

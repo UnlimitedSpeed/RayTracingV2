@@ -8,7 +8,7 @@ class Colour
 private:
     double colour[3];
 
-    double ClampValue(double value) const
+    int ClampValue(double value) const
     {
         if (value > 255)
         {
@@ -19,7 +19,7 @@ private:
             return 0;
         }
 
-        return value;
+        return static_cast<int>(value);
     }
 
 public:

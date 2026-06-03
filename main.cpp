@@ -1,10 +1,15 @@
 #include <iostream>
-#include "helper/Vec3.h"
+#include "Camera/Camera.h"
 
 int main () {
-    std::cout << "Hello, World!" << std::endl;
-    Vec3 vec = Vec3();
+    std::clog << "Hello, World!" << std::endl;
+    // Create Camera
+    const double aspectRatio = 16.0 / 9.0;
+    const int imageWidth = 600;
 
-    std::cout << vec;
+    Camera camera = Camera(aspectRatio, imageWidth, 1.0, 2.0);
+
+    camera.Render();
+
     return 0;
 }

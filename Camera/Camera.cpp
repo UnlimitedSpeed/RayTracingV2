@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "helper/Vec3.h"
 
 Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight)
 {
@@ -22,6 +21,34 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
     this->pixel0Location = viewportUpperLeft + pixelDeltaU / 2 + pixelDeltaV / 2;
 }
 
+Colour Camera::RayColour(const Ray& ray)
+{
+    // Background colour
+    const Vec3 direction = ray.GetDirection();
+    const double y = 0.5 * (direction.y() + 1);
+    const Colour startColour = Colours::BLUE;
+    const Colour endColour = Colours::CYAN;
+    return (1 - y) * startColour + y * endColour;
+}
+
+Ray Camera::GetRay(int w, int h)
+{
+    Vec3 pixelCenter = pixel0Location + w * pixelDeltaU + h  * pixelDeltaV;
+    Vec3 rayDirection = pixelCenter - position;
+    return Ray(this->position, rayDirection);
+}
+
 void Camera::Render()
 {
+    std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
+    for (int h = 0; h < imageHeight; h++)
+    {
+        for (int w = 0; w < imageWidth; w++)
+        {
+            Ray ray = GetRay(w, h);
+            Colour pixelColour = RayColour(ray);
+            pixelColour.WriteColour(std::cout);
+        }
+    }
+    
 }

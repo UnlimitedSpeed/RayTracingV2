@@ -2,6 +2,8 @@
 #define CAMERA_HPP
 
 #include "helper/Vec3.h"
+#include "helper/Ray.h"
+#include "helper/Colour.h"
 
 class Camera
 {
@@ -24,6 +26,8 @@ public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};
 
+    Colour RayColour(const Ray& ray);
+    Ray GetRay(int h, int w);
     void Render();
 };
 
