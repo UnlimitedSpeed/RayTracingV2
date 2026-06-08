@@ -3,18 +3,20 @@
 
 #include "helper/Vec3.h"
 #include "helper/Ray.h"
+#include "helper/HitData.h"
 
 namespace Geometry
 {
     class Object
     {
     protected:
-        Vec3 position;
-
-        virtual bool Hit(Ray r) = 0;
+        Colour colour;
 
     public:
         Object() {}
+        Object(Colour colour) : colour(colour) {}
+        virtual bool Hit(Ray r, HitData& hitData) = 0;
+        Colour GetColour() { return colour; }
     };
 }
 

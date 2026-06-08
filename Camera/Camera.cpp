@@ -21,8 +21,26 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
     this->pixel0Location = viewportUpperLeft + pixelDeltaU / 2 + pixelDeltaV / 2;
 }
 
-Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object*> objs)
+Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object *> objs, int depth)
 {
+    if (depth > maxDepth)
+    {
+        return Colour();
+    }
+
+    HitData hitData;
+
+    for (auto obj : objs)
+    {
+        if (obj->Hit(ray, hitData))
+        {
+            Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
+            Ray newRay = Ray(hitData.GetPoint(), newDirection);
+            Colour c = 0.4 * RayColour(newRay, objs, depth + 1);
+            return 0.6 * obj->GetColour() + c;
+        }
+    }
+
     // Background colour
     const Vec3 direction = ray.GetDirection();
     const double y = 0.5 * (direction.y() + 1);
@@ -38,12 +56,15 @@ Ray Camera::GetRay(int w, int h)
     return Ray(this->position, rayDirection);
 }
 
-void Camera::Render(std::vector<Geometry::Object*> objs)
+void Camera::Render(std::vector<Geometry::Object *> objs)
 {
-    std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
+    std::cout << "P3\n"
+              << imageWidth << " " << imageHeight << "\n255\n";
 
     for (int h = 0; h < imageHeight; h++)
     {
+        std::clog << "Scanlines remaining: " << h << '\n'
+                  << std::flush;
         for (int w = 0; w < imageWidth; w++)
         {
             Ray ray = GetRay(w, h);

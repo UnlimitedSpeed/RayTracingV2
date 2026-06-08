@@ -10,25 +10,27 @@ namespace Geometry
     class Quadrilateral : public Object
     {
     private:
-        Vec3 p1;
-        Vec3 p2;
-        Vec3 p3;
-        Vec3 p4;
+        std::vector<Vec3> points;
         std::vector<Triangle> triangles;
 
     public:
-        Quadrilateral(Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4) : p1(p1), p2(p2), p3(p3), p4(p4)
+        Quadrilateral(std::vector<Vec3> points, Colour colour) : Object(colour), points(points)
         {
-            triangles.push_back(Triangle(p1, p2, p3));
-            triangles.push_back(Triangle(p1, p3, p4));
+            triangles.push_back(Triangle({points[0], points[1], points[2]}));
+            triangles.push_back(Triangle({points[0], points[2], points[3]}));
         }
 
-        bool Hit(Ray r) override
+        bool Hit(Ray r, HitData& hitData) override
         {
             bool isHit = false;
             for (auto t : triangles)
             {
-                isHit |= t.Hit(r);
+                isHit |= t.Hit(r, hitData);
+                if (isHit)
+                {
+                    hitData.SetColour(colour);
+                    return true;
+                }
             }
             return isHit;
         }

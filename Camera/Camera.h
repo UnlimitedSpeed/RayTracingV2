@@ -6,6 +6,7 @@
 #include "helper/Ray.h"
 #include "helper/Colour.h"
 #include "Geometry/Object.h"
+#include "helper/HitData.h"
 
 class Camera
 {
@@ -24,11 +25,13 @@ private:
     Vec3 viewportUpperLeft;
     Vec3 pixel0Location;
 
+    const int maxDepth = 5;
+
 public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};
 
-    Colour RayColour(const Ray& ray, std::vector<Geometry::Object*> objs);
+    Colour RayColour(const Ray& ray, std::vector<Geometry::Object*> objs, int depth = 0);
     Ray GetRay(int h, int w);
     void Render(std::vector<Geometry::Object*> objs);
 };

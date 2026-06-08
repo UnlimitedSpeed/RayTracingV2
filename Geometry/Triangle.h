@@ -8,21 +8,19 @@ namespace Geometry
     class Triangle : public Object
     {
     private:
-        Vec3 p1;
-        Vec3 p2;
-        Vec3 p3;
+        std::vector<Vec3> points;
 
     public:
-        Triangle(Vec3 p1, Vec3 p2, Vec3 p3) : p1(p1), p2(p2), p3(p3) {}
+        Triangle(std::vector<Vec3> points) : points(points) {}
         Vec3 GetNormal() const
         {
-            return (p2 - p1).Cross(p3 - p1).UnitVector();
+            return (points[1] - points[0]).Cross(points[2] - points[0]).UnitVector();
         }
 
-        bool Hit(Ray r) override
+        bool Hit(Ray r, HitData& hitData) override
         {
-            const Vec3 e1 = p2 - p1;
-            const Vec3 e2 = p3 - p1;
+            const Vec3 e1 = points[1] - points[0];
+            const Vec3 e2 = points[2] - points[0];
             const Vec3 P = r.GetDirection().Cross(e2);
             const double determinant = e1.Dot(P);
 
@@ -32,8 +30,7 @@ namespace Geometry
                 return false;
             }
 
-
-            const Vec3 T = r.GetOrigin() - p1;
+            const Vec3 T = r.GetOrigin() - points[0];
             const double u = T.Dot(P) / determinant;
 
             if (u > 1 || u < 0)
@@ -44,7 +41,7 @@ namespace Geometry
             const Vec3 Q = T.Cross(e1);
             const double v = r.GetDirection().Dot(Q) / determinant;
 
-            if ( v < 0 || v + u > 1)
+            if (v < 0 || v + u > 1)
             {
                 return false;
             }
@@ -52,6 +49,15 @@ namespace Geometry
             const double t = e2.Dot(Q) / determinant;
 
             const Vec3 point = r.GetOrigin() + t * r.GetDirection();
+
+            const double distanceFromOrigin = (point - r.GetOrigin()).Length();
+            if (distanceFromOrigin <= 0.001 || distanceFromOrigin >= 1000)
+            {
+                return false;
+            }
+
+            hitData.SetNormal(GetNormal());
+            hitData.SetPoint(point);
 
             return true;
         }

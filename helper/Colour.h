@@ -35,6 +35,12 @@ public:
         out << ClampValue(colour[0]) << " " << ClampValue(colour[1]) << " " << ClampValue(colour[2]) << "\n";
     }
 
+    friend std::ostream &operator<<(std::ostream &os, const Colour &c)
+    {
+        os << "Colour(" << c.colour[0] << ", " << c.colour[1] << ", " << c.colour[2] << ")";
+        return os;
+    }
+
     Colour operator+(const Colour &c) const
     {
         return Colour(

@@ -89,8 +89,8 @@ public:
     Vec3 Cross(const Vec3 &v) const
     {
         return Vec3(
-            this->e[1] * v.e[2] - this->e[2] * v.e[2],
-            this->e[2] * v.e[0] - this->e[0] * v.e[1],
+            this->e[1] * v.e[2] - this->e[2] * v.e[1],
+            this->e[2] * v.e[0] - this->e[0] * v.e[2],
             this->e[0] * v.e[1] - this->e[1] * v.e[0]);
     }
 
