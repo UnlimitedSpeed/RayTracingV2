@@ -5,8 +5,11 @@
 #include "helper/Vec3.h"
 #include "helper/Ray.h"
 #include "helper/Colour.h"
-#include "Geometry/Object.h"
-#include "helper/HitData.h"
+
+namespace Geometry
+{
+    class Object;
+}
 
 class Camera
 {

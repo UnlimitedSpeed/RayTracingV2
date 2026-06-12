@@ -2,6 +2,7 @@
 #define TRIANGLE_HPP
 
 #include "Object.h"
+#include "helper/Colour.h"
 
 namespace Geometry
 {
@@ -9,9 +10,9 @@ namespace Geometry
     {
     private:
         std::vector<Vec3> points;
-
     public:
         Triangle(std::vector<Vec3> points) : points(points) {}
+        Triangle(std::vector<Vec3> points, Colour colour) : Object(colour), points(points) {}
         Vec3 GetNormal() const
         {
             return (points[1] - points[0]).Cross(points[2] - points[0]).UnitVector();

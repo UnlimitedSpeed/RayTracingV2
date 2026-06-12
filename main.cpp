@@ -1,8 +1,8 @@
-#include <iostream>
 #include <vector>
+
 #include "Camera/Camera.h"
-#include "Geometry/Object.h"
 #include "Geometry/Quadrilateral.h"
+#include "Geometry/Cube.h"
 
 int main()
 {
@@ -29,6 +29,9 @@ int main()
          Vec3(0, 1, -5)},
         Colours::GREEN);
     objects.push_back(&sq2);
+
+    Geometry::Cube cube = Geometry::Cube(Vec3(0, 0, -10), 6, Colours::BLUE);
+    objects.push_back(&cube);
 
     camera.Render(objects);
 
