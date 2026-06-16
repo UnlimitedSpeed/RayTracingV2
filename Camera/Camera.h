@@ -5,6 +5,7 @@
 #include "helper/Vec3.h"
 #include "helper/Ray.h"
 #include "helper/Colour.h"
+#include "helper/HitData.h"
 
 namespace Geometry
 {
@@ -30,11 +31,14 @@ private:
 
     const int maxDepth = 5;
 
+    const double MAX_INTERVAL = INFINITY;
+
 public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};
 
-    Colour RayColour(const Ray& ray, std::vector<Geometry::Object*> objs, int depth = 0);
+    bool HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, HitData &hitData);
+    Colour RayColour(const Ray &ray, std::vector<Geometry::Object*> objs, int depth = 0);
     Ray GetRay(int h, int w);
     void Render(std::vector<Geometry::Object*> objs);
 };

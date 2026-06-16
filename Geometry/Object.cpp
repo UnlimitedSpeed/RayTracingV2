@@ -14,15 +14,16 @@ namespace Geometry
     }
     Object::~Object() = default;
 
-    bool Object::Hit(Ray r, HitData& hitData)
+    bool Object::Hit(Ray r, HitData &hitData, std::vector<double> interval)
     {
         bool isHit = false;
         for (auto t : triangles)
         {
-            isHit |= t.Hit(r, hitData);
+            isHit |= t.Hit(r, hitData, interval);
             if (isHit)
             {
                 hitData.SetColour(colour);
+                std::clog << "HIT\n" << std::flush;
                 return true;
             }
         }

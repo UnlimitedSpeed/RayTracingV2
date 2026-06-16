@@ -20,7 +20,7 @@ namespace Geometry
         Object();
         Object(Colour colour);
         virtual ~Object();
-        virtual bool Hit(Ray r, HitData& hitData);
+        virtual bool Hit(Ray r, HitData &hitData, std::vector<double> interval);
     };
 }
 

@@ -18,7 +18,7 @@ namespace Geometry
             return (points[1] - points[0]).Cross(points[2] - points[0]).UnitVector();
         }
 
-        bool Hit(Ray r, HitData& hitData) override
+        bool Hit(Ray r, HitData &hitData, std::vector<double> interval) override
         {
             const Vec3 e1 = points[1] - points[0];
             const Vec3 e2 = points[2] - points[0];
@@ -52,13 +52,14 @@ namespace Geometry
             const Vec3 point = r.GetOrigin() + t * r.GetDirection();
 
             const double distanceFromOrigin = (point - r.GetOrigin()).Length();
-            if (distanceFromOrigin <= 0.001 || distanceFromOrigin >= 1000)
+            if (distanceFromOrigin <= interval[0] || distanceFromOrigin >= interval[1])
             {
                 return false;
             }
 
             hitData.SetNormal(GetNormal());
             hitData.SetPoint(point);
+            hitData.SetT(distanceFromOrigin);
 
             return true;
         }

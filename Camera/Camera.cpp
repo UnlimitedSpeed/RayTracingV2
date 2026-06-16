@@ -2,7 +2,6 @@
 
 #include "Camera.h"
 #include "Geometry/Object.h"
-#include "helper/HitData.h"
 
 Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight)
 {
@@ -25,6 +24,30 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
     this->pixel0Location = viewportUpperLeft + pixelDeltaU / 2 + pixelDeltaV / 2;
 }
 
+bool Camera::HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, HitData &hitData)
+{
+    HitData hitTemp;
+
+    bool isHit = false;
+
+    const double minT = 0.001;
+    double closestT = MAX_INTERVAL;
+
+    for (auto obj : objs)
+    {
+        std::clog << "Between " << minT << " and " << closestT << std::endl << std::flush;
+        if (obj->Hit(ray, hitTemp, {minT, closestT}))
+        {
+            isHit = true;
+            closestT = hitTemp.GetT();
+            hitData = hitTemp;
+        }
+    }
+    if (isHit)
+        std::clog << "isHit: " << isHit << "\n" << std::flush; 
+    return isHit;
+}
+
 Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object *> objs, int depth)
 {
     if (depth > maxDepth)
@@ -33,16 +56,12 @@ Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object *> objs, i
     }
 
     HitData hitData;
-
-    for (auto obj : objs)
+    if (HitInterval(ray, objs, hitData))
     {
-        if (obj->Hit(ray, hitData))
-        {
-            Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
-            Ray newRay = Ray(hitData.GetPoint(), newDirection);
-            Colour c = 0.4 * RayColour(newRay, objs, depth + 1);
-            return 0.6 * hitData.GetColour() + c;
-        }
+        Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
+        Ray newRay = Ray(hitData.GetPoint(), newDirection);
+        Colour c = 0.4 * RayColour(newRay, objs, depth + 1);
+        return 0.6 * hitData.GetColour() + c;
     }
 
     // Background colour
