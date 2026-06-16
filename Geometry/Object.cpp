@@ -23,7 +23,6 @@ namespace Geometry
             if (isHit)
             {
                 hitData.SetColour(colour);
-                std::clog << "HIT\n" << std::flush;
                 return true;
             }
         }

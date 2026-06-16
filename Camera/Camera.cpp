@@ -35,7 +35,6 @@ bool Camera::HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, Hi
 
     for (auto obj : objs)
     {
-        std::clog << "Between " << minT << " and " << closestT << std::endl << std::flush;
         if (obj->Hit(ray, hitTemp, {minT, closestT}))
         {
             isHit = true;
@@ -43,8 +42,6 @@ bool Camera::HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, Hi
             hitData = hitTemp;
         }
     }
-    if (isHit)
-        std::clog << "isHit: " << isHit << "\n" << std::flush; 
     return isHit;
 }
 
