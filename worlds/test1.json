@@ -1,0 +1,13 @@
+{
+    "objects":
+    [
+        {
+            "type": "cube",
+            "params":
+            {
+                "position": [0, 0, -10],
+                "size": 3
+            }
+        }
+    ]
+}
