@@ -6,6 +6,56 @@
 
 using json = nlohmann::json;
 
+void WorldParser::CreateMaterials(nlohmann::json materials)
+{
+    Material* defaultMaterial = new Material();
+    materialsMap.insert({"default", defaultMaterial});
+
+    for (auto mat : materials)
+    {
+        if (!mat.contains("id"))
+        {
+            std::cerr << "Missing id from material\n";
+            continue;
+        }
+        const std::string id = mat["id"];
+
+        Colour colour = Colour();
+        if (mat.contains("colour"))
+        {
+            auto c = mat["colour"];
+            colour = Colour(c[0], c[1], c[2]);
+        }
+
+        float metallic = 0;
+        if (mat.contains("metallic"))
+        {
+            metallic = mat["metallic"];
+        }
+
+        float roughness = 1;
+        if (mat.contains("roughness"))
+        {
+            roughness = mat["roughness"];
+        }
+
+        float ior = 0;
+        if (mat.contains("ior"))
+        {
+            ior = mat["ior"];
+        }
+
+        float transmission = 0;
+        if (mat.contains("transmission"))
+        {
+            transmission = mat["transmission"];
+        }
+
+        Material* newMaterial = new Material(colour, metallic, roughness, ior, transmission);
+        materialsMap.insert({id, newMaterial});
+    }
+}
+
 void WorldParser::CreateCube(const json params)
 {
     if (!params.contains("position"))
@@ -22,7 +72,13 @@ void WorldParser::CreateCube(const json params)
     }
     const double size = params["size"];
 
-    std::unique_ptr<Geometry::Object> cube(new Geometry::Cube(pos, size, Colour()));
+    std::string mat = "default";
+    if (params.contains("material"))
+    {
+        mat = params["material"];
+    }
+
+    std::unique_ptr<Geometry::Object> cube(new Geometry::Cube(pos, size, materialsMap.at(mat)));
     objectsInWorld.push_back(std::move(cube));
     return;
 }
@@ -70,10 +126,15 @@ bool WorldParser::CreateWorld(const std::string fileName, std::vector<Geometry::
 
     objectsInWorld.clear();
 
-    if (!data.contains("objects"))
+    if (!data.contains("objects") || data["objects"].empty())
     {
         std::cerr << "No Objects found on file" << std::endl;
         return false;
+    }
+
+    if (data.contains("materials") && !data["materials"].empty())
+    {
+        CreateMaterials(data["materials"]);
     }
 
     const auto worldObjects = data["objects"];

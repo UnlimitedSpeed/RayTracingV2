@@ -1,4 +1,14 @@
 {
+    "materials":
+    [
+        {
+            "id": "RedSolid",
+            "colour": [255, 0, 0],
+            "metallic": 0,
+            "roughness": 1,
+            "transmission": 0
+        }
+    ],
     "objects":
     [
         {
@@ -6,7 +16,16 @@
             "params":
             {
                 "position": [0, 0, -10],
-                "size": 3
+                "size": 3,
+                "material": "RedSolid"
+            }
+        },
+        {
+            "type": "cube",
+            "params":
+            {
+                "position": [-5, -5, -10],
+                "size": 7
             }
         }
     ]

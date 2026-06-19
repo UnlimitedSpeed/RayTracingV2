@@ -57,8 +57,11 @@ Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object *> objs, i
     {
         Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
         Ray newRay = Ray(hitData.GetPoint(), newDirection);
-        Colour c = 0.4 * RayColour(newRay, objs, depth + 1);
-        return 0.6 * hitData.GetColour() + c;
+
+
+
+
+        return hitData.GetMaterial()->GetColour();
     }
 
     // Background colour

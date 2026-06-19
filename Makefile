@@ -13,7 +13,7 @@ OBJS := $(patsubst ./%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 all: $(TARGET)
 
 render: $(TARGET)
-	./$(TARGET) > out.ppm
+	./$(TARGET) test1.json > out.ppm
 
 $(TARGET): $(OBJS)
 	@mkdir -p $(dir $@)

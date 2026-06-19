@@ -5,12 +5,12 @@ namespace Geometry
 {
     Object::Object()
     {
-        this->colour = Colour();
+        this->material = new Material();
     }
 
-    Object::Object(Colour colour)
+    Object::Object(Material* material)
     {
-        this->colour = colour;
+        this->material = material;
     }
     Object::~Object() = default;
 
@@ -22,7 +22,7 @@ namespace Geometry
             isHit |= t.Hit(r, hitData, interval);
             if (isHit)
             {
-                hitData.SetColour(colour);
+                hitData.SetMaterial(material);
                 return true;
             }
         }

@@ -5,6 +5,7 @@
 #include "helper/Vec3.h"
 #include "helper/Ray.h"
 #include "helper/HitData.h"
+#include "Material/Material.h"
 
 namespace Geometry
 {
@@ -13,12 +14,12 @@ namespace Geometry
     class Object
     {
     private:
-        Colour colour;
+        Material* material;
     protected:
         std::vector<Triangle> triangles;
     public:
         Object();
-        Object(Colour colour);
+        Object(Material* material);
         virtual ~Object();
         virtual bool Hit(Ray r, HitData &hitData, std::vector<double> interval);
     };

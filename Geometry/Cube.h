@@ -8,7 +8,7 @@ namespace Geometry
     class Cube : public Object
     {
     public:
-        Cube(Vec3 position, double size, Colour colour) : Object(colour)
+        Cube(Vec3 position, double size, Material* material) : Object(material)
         {
             std::vector<Vec3> vertices;
             const double t = size / 2;
