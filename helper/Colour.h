@@ -1,6 +1,7 @@
 #ifndef COLOUR_HPP
 #define COLOUR_HPP
 
+#include <algorithm>
 #include <ostream>
 
 class Colour
@@ -8,18 +9,11 @@ class Colour
 private:
     double colour[3];
 
-    int ClampValue(double value) const
+    int ToByte(double value) const
     {
-        if (value > 255)
-        {
-            return 255;
-        }
-        else if (value < 0)
-        {
-            return 0;
-        }
-
-        return static_cast<int>(value);
+        if (value < 0.0) value = 0.0;
+        if (value > 1.0) value = 1.0;
+        return static_cast<int>(255.999 * value);
     }
 
 public:
@@ -32,7 +26,7 @@ public:
 
     void WriteColour(std::ostream &out)
     {
-        out << ClampValue(colour[0]) << " " << ClampValue(colour[1]) << " " << ClampValue(colour[2]) << "\n";
+        out << ToByte(colour[0]) << " " << ToByte(colour[1]) << " " << ToByte(colour[2]) << "\n";
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Colour &c)
@@ -77,9 +71,9 @@ public:
 
     Colour operator*(const Colour &c) const
     {
-        double r = ((colour[0] / 255) * (c.colour[0] / 255)) * 255;
-        double g = ((colour[1] / 255) * (c.colour[1] / 255)) * 255;
-        double b = ((colour[2] / 255) * (c.colour[2] / 255)) * 255;
+        double r = colour[0] * c.colour[0];
+        double g = colour[1] * c.colour[1];
+        double b = colour[2] * c.colour[2];
 
         return Colour(r, g, b);
     }
@@ -107,13 +101,13 @@ public:
 namespace Colours
 {
     const Colour BLACK(0, 0, 0);
-    const Colour WHITE(255, 255, 255);
-    const Colour RED(255, 0, 0);
-    const Colour GREEN(0, 255, 0);
-    const Colour BLUE(0, 0, 255);
-    const Colour YELLOW(255, 255, 0);
-    const Colour CYAN(0, 255, 255);
-    const Colour MAGENTA(255, 0, 255);
+    const Colour WHITE(1, 1, 1);
+    const Colour RED(1, 0, 0);
+    const Colour GREEN(0, 1, 0);
+    const Colour BLUE(0, 0, 1);
+    const Colour YELLOW(1, 1, 0);
+    const Colour CYAN(0, 1, 1);
+    const Colour MAGENTA(1, 0, 1);
 }
 
 #endif

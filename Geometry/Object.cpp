@@ -16,14 +16,17 @@ namespace Geometry
 
     bool Object::Hit(Ray r, HitData &hitData, std::vector<double> interval)
     {
+        double closestT = interval[1];
+
+
         bool isHit = false;
         for (auto t : triangles)
         {
-            isHit |= t.Hit(r, hitData, interval);
+            isHit |= t.Hit(r, hitData, {interval[0], closestT});
             if (isHit)
             {
                 hitData.SetMaterial(material);
-                return true;
+                closestT = hitData.GetT();
             }
         }
         return isHit;

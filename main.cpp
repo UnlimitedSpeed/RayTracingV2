@@ -14,9 +14,8 @@ int main(int argc, char** argv)
 
     WorldParser wp = WorldParser();
 
-    std::vector<Geometry::Object *> objects;
-    if(wp.CreateWorld(argv[1], objects))
-        camera.Render(objects);
+    wp.CreateWorld(argv[1]);
+    camera.Render(wp.GetObjectsInWorld(), wp.GetLightsInWorld());
 
     return 0;
 }

@@ -24,7 +24,7 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
     this->pixel0Location = viewportUpperLeft + pixelDeltaU / 2 + pixelDeltaV / 2;
 }
 
-bool Camera::HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, HitData &hitData)
+bool Camera::HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, HitData &hitData)
 {
     HitData hitTemp;
 
@@ -33,7 +33,7 @@ bool Camera::HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, Hi
     const double minT = 0.001;
     double closestT = MAX_INTERVAL;
 
-    for (auto obj : objs)
+    for (auto &obj : objs)
     {
         if (obj->Hit(ray, hitTemp, {minT, closestT}))
         {
@@ -45,7 +45,7 @@ bool Camera::HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, Hi
     return isHit;
 }
 
-Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object *> objs, int depth)
+Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights, int depth)
 {
     if (depth > maxDepth)
     {
@@ -58,10 +58,15 @@ Colour Camera::RayColour(const Ray &ray, std::vector<Geometry::Object *> objs, i
         Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
         Ray newRay = Ray(hitData.GetPoint(), newDirection);
 
+        Colour diffuse = hitData.GetMaterial()->GetColour() * 0.1;
+        for (auto l : lights)
+        {
+            Vec3 lightDirection = (l - hitData.GetPoint()).UnitVector();
+            double dot = std::max(0.0, lightDirection.Dot(hitData.GetNormal()));
+            diffuse += hitData.GetMaterial()->GetColour() * Colours::WHITE * dot;
+        }
 
-
-
-        return hitData.GetMaterial()->GetColour();
+        return diffuse;//hitData.GetMaterial()->GetColour();
     }
 
     // Background colour
@@ -79,7 +84,7 @@ Ray Camera::GetRay(int w, int h)
     return Ray(this->position, rayDirection);
 }
 
-void Camera::Render(std::vector<Geometry::Object *> objs)
+void Camera::Render(const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights)
 {
     std::cout << "P3\n"
               << imageWidth << " " << imageHeight << "\n255\n";
@@ -91,7 +96,7 @@ void Camera::Render(std::vector<Geometry::Object *> objs)
         for (int w = 0; w < imageWidth; w++)
         {
             Ray ray = GetRay(w, h);
-            Colour pixelColour = RayColour(ray, objs);
+            Colour pixelColour = RayColour(ray, objs, lights);
             pixelColour.WriteColour(std::cout);
         }
     }

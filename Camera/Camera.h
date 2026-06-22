@@ -6,6 +6,7 @@
 #include "helper/Ray.h"
 #include "helper/Colour.h"
 #include "helper/HitData.h"
+#include <memory>
 
 namespace Geometry
 {
@@ -37,10 +38,10 @@ public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};
 
-    bool HitInterval(const Ray &ray, std::vector<Geometry::Object*> objs, HitData &hitData);
-    Colour RayColour(const Ray &ray, std::vector<Geometry::Object*> objs, int depth = 0);
+    bool HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, HitData &hitData);
+    Colour RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights, int depth = 0);
     Ray GetRay(int h, int w);
-    void Render(std::vector<Geometry::Object*> objs);
+    void Render(const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights);
 };
 
 #endif
