@@ -16,8 +16,8 @@
             "transmission": 0
         },
         {
-            "id": "BlueSolid",
-            "colour": [210, 210, 210],
+            "id": "WhiteSolid",
+            "colour": [255, 255, 255],
             "metallic": 0,
             "roughness": 1,
             "transmission": 0
@@ -26,22 +26,28 @@
     "lights":
     [
         {
-            "position": [10, 30, -5]
+            "position": [0, 15, -10]
         }
     ],
     "objects":
     [
         {
             "type": "cube",
-            "position": [0, 0, -10],
+            "position": [5, 1.5, -10],
             "size": 3,
             "material": "RedSolid"
         },
         {
             "type": "cube",
-            "position": [-5, -5, -10],
-            "size": 7,
+            "position": [-5, 1.5, -10],
+            "size": 3,
             "material": "GreenSolid"
+        },
+        {
+            "type": "cube",
+            "position": [0, -10, -10],
+            "size": 20,
+            "material": "WhiteSolid"
         }
     ]
 }

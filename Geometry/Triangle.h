@@ -49,17 +49,19 @@ namespace Geometry
 
             const double t = e2.Dot(Q) / determinant;
 
-            const Vec3 point = r.GetOrigin() + t * r.GetDirection();
+            Vec3 direction = r.GetDirection();
+            const double distanceAlongRay = t * direction.Length();
 
-            const double distanceFromOrigin = (point - r.GetOrigin()).Length();
-            if (distanceFromOrigin <= interval[0] || distanceFromOrigin >= interval[1])
+            if (distanceAlongRay <= interval[0] || distanceAlongRay >= interval[1])
             {
                 return false;
             }
 
+            const Vec3 point = r.GetOrigin() + t * direction;
+
             hitData.SetNormal(GetNormal());
             hitData.SetPoint(point);
-            hitData.SetT(distanceFromOrigin);
+            hitData.SetT(distanceAlongRay);
 
             return true;
         }

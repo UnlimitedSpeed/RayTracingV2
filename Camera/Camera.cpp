@@ -12,7 +12,7 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
     this->focalLength = focalLength;
     this->viewportHeight = viewportHeight;
     this->viewportWidth = viewportHeight * (double(imageWidth) / imageHeight);
-    this->position = Vec3();
+    this->position = Vec3(0, 3, 0);
 
     this->viewportU = Vec3(viewportWidth, 0, 0);
     this->viewportV = Vec3(0, -viewportHeight, 0);
@@ -58,15 +58,28 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
         Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
         Ray newRay = Ray(hitData.GetPoint(), newDirection);
 
-        Colour diffuse = hitData.GetMaterial()->GetColour() * 0.1;
+        Colour diffuse = hitData.GetMaterial()->GetColour() * 0.2;
         for (auto l : lights)
         {
-            Vec3 lightDirection = (l - hitData.GetPoint()).UnitVector();
-            double dot = std::max(0.0, lightDirection.Dot(hitData.GetNormal()));
+            Vec3 toLight = l - hitData.GetPoint();
+            const double lightDistance = toLight.Length();
+            const Vec3 lightDirection = (toLight).UnitVector();
+            const double dot = std::max(0.0, lightDirection.Dot(hitData.GetNormal()));
+
+            const Ray shadowRay = Ray(hitData.GetPoint() + hitData.GetNormal() * 0.001, lightDirection);
+            HitData tmp;
+            if (HitInterval(shadowRay, objs, tmp))
+            {
+                if (tmp.GetT() < lightDistance)
+                {
+                    continue;
+                }
+            }
+
             diffuse += hitData.GetMaterial()->GetColour() * Colours::WHITE * dot;
         }
 
-        return diffuse;//hitData.GetMaterial()->GetColour();
+        return diffuse;
     }
 
     // Background colour
