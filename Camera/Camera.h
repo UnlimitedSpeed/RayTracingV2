@@ -31,9 +31,10 @@ private:
     Vec3 pixel0Location;
 
     const int maxDepth = 5;
-
+    const int samples_per_pixel = 10;
     const double MAX_INTERVAL = INFINITY;
 
+    Vec3 SampleSquare();
 public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};

@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Geometry/Object.h"
+#include "helper/Utils.h"
 
 Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight)
 {
@@ -54,10 +55,7 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
 
     HitData hitData;
     if (HitInterval(ray, objs, hitData))
-    {
-        Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
-        Ray newRay = Ray(hitData.GetPoint(), newDirection);
-
+    {        
         Colour diffuse = hitData.GetMaterial()->GetColour() * 0.2;
         for (auto l : lights)
         {
@@ -75,11 +73,14 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
                     continue;
                 }
             }
-
+            
             diffuse += hitData.GetMaterial()->GetColour() * Colours::WHITE * dot;
         }
 
-        return diffuse;
+        Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
+        Ray newRay = Ray(hitData.GetPoint(), newDirection);
+
+        return diffuse + 0.1 * RayColour(newRay, objs, lights, depth + 1);
     }
 
     // Background colour
@@ -92,9 +93,15 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
 
 Ray Camera::GetRay(int w, int h)
 {
-    Vec3 pixelCenter = pixel0Location + w * pixelDeltaU + h * pixelDeltaV;
+    auto offset = SampleSquare();
+
+    Vec3 pixelCenter = pixel0Location + (w + offset.x()) * pixelDeltaU + (h + offset.y()) * pixelDeltaV;
     Vec3 rayDirection = pixelCenter - position;
     return Ray(this->position, rayDirection);
+}
+
+Vec3 Camera::SampleSquare() {
+    return Vec3(random_double() - 0.1, random_double() - 0.1, 0);
 }
 
 void Camera::Render(const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights)
@@ -108,8 +115,12 @@ void Camera::Render(const std::vector<std::unique_ptr<Geometry::Object>>& objs, 
                   << std::flush;
         for (int w = 0; w < imageWidth; w++)
         {
-            Ray ray = GetRay(w, h);
-            Colour pixelColour = RayColour(ray, objs, lights);
+            Colour pixelColour(0,0,0);
+            for (int sample = 0; sample < samples_per_pixel; sample++) {
+                Ray ray = GetRay(w, h);
+                pixelColour += RayColour(ray, objs, lights, 2);
+            }
+            pixelColour = pixelColour / samples_per_pixel;
             pixelColour.WriteColour(std::cout);
         }
     }
