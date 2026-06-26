@@ -1,6 +1,6 @@
 CXX      := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra -I.
-LDFLAGS  :=
+CXXFLAGS := -std=c++17 -Wall -Wextra -I. $(shell pkg-config --cflags sdl2)
+LDFLAGS  := $(shell pkg-config --libs sdl2)
 
 BUILD_DIR := build
 TARGET    := $(BUILD_DIR)/raytracer

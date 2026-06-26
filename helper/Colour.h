@@ -24,9 +24,9 @@ public:
     double g() const { return colour[1]; }
     double b() const { return colour[2]; }
 
-    void WriteColour(std::ostream &out)
+    std::vector<int> GetColourToWrite()
     {
-        out << ToByte(colour[0]) << " " << ToByte(colour[1]) << " " << ToByte(colour[2]) << "\n";
+        return {ToByte(colour[0]), ToByte(colour[1]), ToByte(colour[2])};
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Colour &c)

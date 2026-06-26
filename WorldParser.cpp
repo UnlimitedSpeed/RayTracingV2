@@ -1,16 +1,17 @@
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include "WorldParser.h"
 #include "Geometry/Structs.h"
 #include "Geometry/Cube.h"
 #include "Geometry/Sphere.h"
+#include "Geometry/TriangleObject.h"
 
 using json = nlohmann::json;
 
 void WorldParser::CreateMaterials(nlohmann::json materials)
 {
-    Material *defaultMaterial = new Material();
-    materialsMap.insert({"default", defaultMaterial});
+    materialsMap.emplace("default", std::make_unique<Material>());
 
     for (auto mat : materials)
     {
@@ -56,8 +57,7 @@ void WorldParser::CreateMaterials(nlohmann::json materials)
             transmission = mat["transmission"].get<float>();
         }
 
-        Material *newMaterial = new Material(colour, metallic, roughness, ior, transmission);
-        materialsMap.insert({id, newMaterial});
+        materialsMap.emplace(id, std::make_unique<Material>(colour, metallic, roughness, ior, transmission));
     }
 }
 
@@ -106,8 +106,7 @@ void WorldParser::CreateCube(const json object)
         mat = object["material"];
     }
 
-    std::unique_ptr<Geometry::Object> cube(new Geometry::Cube(pos, size, materialsMap.at(mat)));
-    objectsInWorld.push_back(std::move(cube));
+    objectsInWorld.push_back(std::make_unique<Geometry::Cube>(pos, size, materialsMap.at(mat).get()));
 }
 
 void WorldParser::CreateSphere(const json object)
@@ -150,14 +149,54 @@ void WorldParser::CreateSphere(const json object)
         mat = object["material"];
     }
 
-    std::unique_ptr<Geometry::Object> sphere(new Geometry::Sphere(pos, radius, sides, height, materialsMap.at(mat)));
-    objectsInWorld.push_back(std::move(sphere));
+    objectsInWorld.push_back(std::make_unique<Geometry::Sphere>(pos, radius, sides, height, materialsMap.at(mat).get()));
+}
+
+void WorldParser::CreateTriangle(const json object)
+{
+    if (!object.contains("vertices"))
+    {
+        std::cerr << "Missing vertices from Triangle\n";
+        return;
+    }
+
+    const auto &verts = object["vertices"];
+    if (verts.size() != 3)
+    {
+        std::cerr << "Triangle must have exactly 3 vertices\n";
+        return;
+    }
+
+    const Vec3 v0(
+        verts[0][0].get<double>(),
+        verts[0][1].get<double>(),
+        verts[0][2].get<double>()
+    );
+    const Vec3 v1(
+        verts[1][0].get<double>(),
+        verts[1][1].get<double>(),
+        verts[1][2].get<double>()
+    );
+    const Vec3 v2(
+        verts[2][0].get<double>(),
+        verts[2][1].get<double>(),
+        verts[2][2].get<double>()
+    );
+
+    std::string mat = "default";
+    if (object.contains("material"))
+    {
+        mat = object["material"];
+    }
+
+    objectsInWorld.push_back(std::make_unique<Geometry::TriangleObject>(
+        Geometry::Triangle(v0, v1, v2),
+        materialsMap.at(mat).get()
+    ));
 }
 
 void WorldParser::CreateObjects(const json objs)
 {
-    std::vector<Geometry::Object *> objects;
-
     for (auto obj : objs)
     {
         if (!obj.contains("type"))
@@ -170,21 +209,18 @@ void WorldParser::CreateObjects(const json objs)
         switch (type)
         {
         case Geometry::Types::Cube:
-        {
             CreateCube(obj);
             break;
-        }
         case Geometry::Types::Sphere:
-        {
             CreateSphere(obj);
             break;
-        }
+        case Geometry::Types::Triangle:
+            CreateTriangle(obj);
+            break;
         default:
             break;
         }
     }
-
-    return;
 }
 
 void WorldParser::CreateWorld(const std::string fileName)
@@ -193,9 +229,17 @@ void WorldParser::CreateWorld(const std::string fileName)
     std::ifstream f(fullName);
     const json data = json::parse(f);
 
+    materialsMap.clear();
+    lightsInWorld.clear();
+    objectsInWorld.clear();
+
     if (data.contains("materials") && !data["materials"].empty())
     {
         CreateMaterials(data["materials"]);
+    }
+    else
+    {
+        materialsMap.emplace("default", std::make_unique<Material>());
     }
 
     if (data.contains("lights") && !data["lights"].empty())
@@ -205,8 +249,6 @@ void WorldParser::CreateWorld(const std::string fileName)
 
     if (data.contains("objects") && !data["objects"].empty())
     {
-        const auto worldObjects = data["objects"];
-        objectsInWorld.clear();
-        CreateObjects(worldObjects);
+        CreateObjects(data["objects"]);
     }
 }

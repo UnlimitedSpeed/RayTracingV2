@@ -1,3 +1,4 @@
+#include <map>
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -19,11 +20,11 @@ private:
     /* data */
     std::string WORLDS_FOLDER = "worlds/";
     std::vector<std::unique_ptr<Geometry::Object>> objectsInWorld;
-    std::map<std::string, Material*> materialsMap;
+    std::map<std::string, std::unique_ptr<Material>> materialsMap;
     std::vector<Vec3> lightsInWorld;
 
 public:
-    WorldParser(/* args */) {};
+    WorldParser() {};
 
     const std::vector<std::unique_ptr<Geometry::Object>>& GetObjectsInWorld() const { return objectsInWorld; };
     const std::vector<Vec3>& GetLightsInWorld() const { return lightsInWorld; };
@@ -32,6 +33,7 @@ public:
     void CreateLights(nlohmann::json lights);
     void CreateCube(nlohmann::json object);
     void CreateSphere(nlohmann::json object);
+    void CreateTriangle(nlohmann::json object);
     void CreateObjects(nlohmann::json objs);
     void CreateWorld(std::string fileName);
 };

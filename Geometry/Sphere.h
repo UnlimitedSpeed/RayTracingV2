@@ -1,7 +1,7 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "Triangle.h"
+#include "Object.h"
 #include "math.h"
 #include "helper/Utils.h"
 
@@ -9,15 +9,13 @@ namespace Geometry
 {
     class Sphere : public Object
     {
-    private:
     public:
         Sphere(Vec3 position, double radius, int sides, int height, Material *material) : Object(material)
         {
             std::vector<std::vector<Vec3>> vertices;
             const double sideAngle = 360.0 / sides;
             const double heightAngle = 180.0 / height;
-            std::clog << "Create Sphere:\n" << std::flush;
-            
+
             for (double i = 0; i < 360; i += sideAngle)
             {
                 std::vector<Vec3> vert;
@@ -32,22 +30,16 @@ namespace Geometry
                 vertices.push_back(vert);
             }
 
-            for (int i = 0; i < vertices.size() - 1; i++)
+            for (size_t i = 0; i < vertices.size() - 1; i++)
             {
-                std::vector<Vec3> vert1 = vertices[i];
-                std::vector<Vec3> vert2 = vertices[i+1];
-                for (int j = 0; j < vert1.size() - 1; j++)
+                const std::vector<Vec3> &vert1 = vertices[i];
+                const std::vector<Vec3> &vert2 = vertices[i + 1];
+                for (size_t j = 0; j < vert1.size() - 1; j++)
                 {
-                    Triangle t1 = Triangle({vert1[j], vert2[j+1], vert2[j]});
-                    triangles.push_back(t1);
-                    Triangle t2 = Triangle({vert1[j], vert1[j+1], vert2[j+1]});
-                    triangles.push_back(t2);
+                    triangles.push_back(Triangle(vert1[j], vert2[j + 1], vert2[j]));
+                    triangles.push_back(Triangle(vert1[j], vert1[j + 1], vert2[j + 1]));
                 }
-                
             }
-            
-
-
         }
     };
 }

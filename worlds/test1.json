@@ -33,11 +33,29 @@
     [
         {
             "type": "sphere",
-            "position": [0, 1.5, -10],
+            "position": [0, 5, -20],
             "radius": 5,
-            "sides": 20,
-            "height": 20,
+            "sides": 25,
+            "height": 25,
+            "material": "RedSolid"
+        },
+        {
+            "type": "cube",
+            "position": [5, 1.5, -10],
+            "size": 3,
+            "material": "RedSolid"
+        },
+        {
+            "type": "cube",
+            "position": [-5, 1.5, -10],
+            "size": 3,
             "material": "GreenSolid"
+        },
+        {
+            "type": "cube",
+            "position": [0, -10, -10],
+            "size": 20,
+            "material": "WhiteSolid"
         }
     ]
 }

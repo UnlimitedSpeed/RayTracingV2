@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 
 #include "Camera.h"
@@ -25,7 +26,7 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
     this->pixel0Location = viewportUpperLeft + pixelDeltaU / 2 + pixelDeltaV / 2;
 }
 
-bool Camera::HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, HitData &hitData)
+bool Camera::HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>> &objs, HitData &hitData)
 {
     HitData hitTemp;
 
@@ -46,7 +47,7 @@ bool Camera::HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geome
     return isHit;
 }
 
-Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights, int depth)
+Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, int depth)
 {
     if (depth > maxDepth)
     {
@@ -55,7 +56,7 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
 
     HitData hitData;
     if (HitInterval(ray, objs, hitData))
-    {        
+    {
         Colour diffuse = hitData.GetMaterial()->GetColour() * 0.2;
         for (auto l : lights)
         {
@@ -73,7 +74,7 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
                     continue;
                 }
             }
-            
+
             diffuse += hitData.GetMaterial()->GetColour() * Colours::WHITE * dot;
         }
 
@@ -100,28 +101,41 @@ Ray Camera::GetRay(int w, int h)
     return Ray(this->position, rayDirection);
 }
 
-Vec3 Camera::SampleSquare() {
+Vec3 Camera::SampleSquare()
+{
     return Vec3(random_double() - 0.1, random_double() - 0.1, 0);
 }
 
-void Camera::Render(const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights)
+void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, bool &running)
 {
-    std::cout << "P3\n"
-              << imageWidth << " " << imageHeight << "\n255\n";
-
     for (int h = 0; h < imageHeight; h++)
     {
-        std::clog << "Scanlines remaining: " << h << '\n'
-                  << std::flush;
+        std::clog << "\rScanlines remaining: " << (imageHeight - h) << std::flush;
         for (int w = 0; w < imageWidth; w++)
         {
-            Colour pixelColour(0,0,0);
-            for (int sample = 0; sample < samples_per_pixel; sample++) {
+            Colour pixelColour(0, 0, 0);
+            for (int sample = 0; sample < samples_per_pixel; sample++)
+            {
                 Ray ray = GetRay(w, h);
-                pixelColour += RayColour(ray, objs, lights, 2);
+                pixelColour += RayColour(ray, objs, lights, 0);
             }
             pixelColour = pixelColour / samples_per_pixel;
-            pixelColour.WriteColour(std::cout);
+            auto colour = pixelColour.GetColourToWrite();
+
+            SDL_SetRenderDrawColor(renderer, colour[0], colour[1], colour[2], 255);
+            SDL_RenderDrawPoint(renderer, w, h);
         }
+
+        SDL_RenderPresent(renderer);
+
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+                running = false;
+        }
+        if (!running)
+            return;
     }
+    std::clog << "\nDone.\n";
 }

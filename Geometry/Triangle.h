@@ -1,37 +1,40 @@
 #ifndef TRIANGLE_HPP
 #define TRIANGLE_HPP
 
-#include "Object.h"
-#include "helper/Colour.h"
+#include <vector>
+
+#include "helper/Ray.h"
+#include "helper/HitData.h"
+#include "helper/Vec3.h"
 
 namespace Geometry
 {
-    class Triangle : public Object
+    struct Triangle
     {
-    private:
-        std::vector<Vec3> points;
-    public:
-        Triangle(std::vector<Vec3> points) : points(points) {}
-        Triangle(std::vector<Vec3> points, Material* material) : Object(material), points(points) {}
+        Vec3 v0;
+        Vec3 v1;
+        Vec3 v2;
+
+        Triangle(Vec3 v0, Vec3 v1, Vec3 v2) : v0(v0), v1(v1), v2(v2) {}
+
         Vec3 GetNormal() const
         {
-            return (points[1] - points[0]).Cross(points[2] - points[0]).UnitVector();
+            return (v1 - v0).Cross(v2 - v0).UnitVector();
         }
 
-        bool Hit(Ray r, HitData &hitData, std::vector<double> interval) override
+        bool Hit(Ray r, HitData &hitData, const std::vector<double> &interval) const
         {
-            const Vec3 e1 = points[1] - points[0];
-            const Vec3 e2 = points[2] - points[0];
+            const Vec3 e1 = v1 - v0;
+            const Vec3 e2 = v2 - v0;
             const Vec3 P = r.GetDirection().Cross(e2);
             const double determinant = e1.Dot(P);
 
             if (determinant == 0)
             {
-                // No intersection with plane
                 return false;
             }
 
-            const Vec3 T = r.GetOrigin() - points[0];
+            const Vec3 T = r.GetOrigin() - v0;
             const double u = T.Dot(P) / determinant;
 
             if (u > 1 || u < 0)

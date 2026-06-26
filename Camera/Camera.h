@@ -2,6 +2,7 @@
 #define CAMERA_HPP
 
 #include <vector>
+#include <SDL2/SDL.h>
 #include "helper/Vec3.h"
 #include "helper/Ray.h"
 #include "helper/Colour.h"
@@ -31,7 +32,7 @@ private:
     Vec3 pixel0Location;
 
     const int maxDepth = 5;
-    const int samples_per_pixel = 10;
+    const int samples_per_pixel = 4;
     const double MAX_INTERVAL = INFINITY;
 
     Vec3 SampleSquare();
@@ -42,7 +43,7 @@ public:
     bool HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, HitData &hitData);
     Colour RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights, int depth = 0);
     Ray GetRay(int h, int w);
-    void Render(const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights);
+    void Render(SDL_Renderer* renderer, const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights, bool& running);
 };
 
 #endif
