@@ -3,6 +3,7 @@
 #include "WorldParser.h"
 #include "Geometry/Structs.h"
 #include "Geometry/Cube.h"
+#include "Geometry/Sphere.h"
 
 using json = nlohmann::json;
 
@@ -79,34 +80,78 @@ void WorldParser::CreateLights(const json lights)
     }
 }
 
-void WorldParser::CreateCube(const json obj)
+void WorldParser::CreateCube(const json object)
 {
-    if (!obj.contains("position"))
+    if (!object.contains("position"))
     {
         std::cerr << "Missing position from Cube\n";
         return;
     }
     const Vec3 pos = Vec3(
-        obj["position"][0].get<double>(),
-        obj["position"][1].get<double>(),
-        obj["position"][2].get<double>()
+        object["position"][0].get<double>(),
+        object["position"][1].get<double>(),
+        object["position"][2].get<double>()
     );
 
-    if (!obj.contains("size"))
+    if (!object.contains("size"))
     {
         std::cerr << "Missing size from Cube\n";
         return;
     }
-    const double size = obj["size"].get<double>();
+    const double size = object["size"].get<double>();
 
     std::string mat = "default";
-    if (obj.contains("material"))
+    if (object.contains("material"))
     {
-        mat = obj["material"];
+        mat = object["material"];
     }
 
     std::unique_ptr<Geometry::Object> cube(new Geometry::Cube(pos, size, materialsMap.at(mat)));
     objectsInWorld.push_back(std::move(cube));
+}
+
+void WorldParser::CreateSphere(const json object)
+{
+    if (!object.contains("position"))
+    {
+        std::cerr << "Missing position for Sphere\n";
+        return;
+    }
+    const Vec3 pos = Vec3(
+        object["position"][0].get<double>(),
+        object["position"][1].get<double>(),
+        object["position"][2].get<double>()
+    );
+
+    if (!object.contains("radius"))
+    {
+        std::cerr << "Missing radius for Sphere\n";
+        return;
+    }
+    const int radius = object["radius"].get<int>();
+
+    if (!object.contains("sides"))
+    {
+        std::cerr << "Missing sides for Sphere\n";
+        return;
+    }
+    const int sides = object["sides"].get<int>();
+
+    if (!object.contains("height"))
+    {
+        std::cerr << "Missing height for Sphere\n";
+        return;
+    }
+    const int height = object["height"].get<int>();
+
+    std::string mat = "default";
+    if (object.contains("material"))
+    {
+        mat = object["material"];
+    }
+
+    std::unique_ptr<Geometry::Object> sphere(new Geometry::Sphere(pos, radius, sides, height, materialsMap.at(mat)));
+    objectsInWorld.push_back(std::move(sphere));
 }
 
 void WorldParser::CreateObjects(const json objs)
@@ -127,6 +172,11 @@ void WorldParser::CreateObjects(const json objs)
         case Geometry::Types::Cube:
         {
             CreateCube(obj);
+            break;
+        }
+        case Geometry::Types::Sphere:
+        {
+            CreateSphere(obj);
             break;
         }
         default:

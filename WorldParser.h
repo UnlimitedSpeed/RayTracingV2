@@ -30,7 +30,8 @@ public:
 
     void CreateMaterials(nlohmann::json materials);
     void CreateLights(nlohmann::json lights);
-    void CreateCube(nlohmann::json params);
+    void CreateCube(nlohmann::json object);
+    void CreateSphere(nlohmann::json object);
     void CreateObjects(nlohmann::json objs);
     void CreateWorld(std::string fileName);
 };
