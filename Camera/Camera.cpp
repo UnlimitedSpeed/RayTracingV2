@@ -6,6 +6,8 @@
 #include "Geometry/Object.h"
 #include "helper/Utils.h"
 
+#include <thread>
+
 Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight)
 {
     this->aspectRatio = aspectRatio;
@@ -58,7 +60,8 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
     HitData hitData;
     if (HitInterval(ray, objs, hitData))
     {
-        Colour diffuse = hitData.GetMaterial()->GetColour() * 0.2;
+        const auto hitMaterial = hitData.GetMaterial();
+        Colour diffuseColour = hitMaterial->GetColour() * 0.2;
         for (auto l : lights)
         {
             Vec3 toLight = l - hitData.GetPoint();
@@ -76,13 +79,38 @@ Colour Camera::RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geome
                 }
             }
 
-            diffuse += hitData.GetMaterial()->GetColour() * Colours::WHITE * dot;
+            diffuseColour += hitMaterial->GetColour() * Colours::WHITE * dot;
         }
 
-        Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
-        Ray newRay = Ray(hitData.GetPoint(), newDirection);
+        // Reflected Ray
+        Colour reflectedColour = Colours::BLACK;
+        if (hitMaterial->GetMetallic() > 0 || hitMaterial->GetRoughness() < 1)
+        {
+            Vec3 newDirection = ray.GetDirection() - 2 * ray.GetDirection().Dot(hitData.GetNormal()) * hitData.GetNormal();
+            Ray newRay = Ray(hitData.GetPoint(), newDirection);
 
-        return diffuse + 0.1 * RayColour(newRay, objs, lights, depth + 1);
+            reflectedColour = RayColour(newRay, objs, lights, depth + 1);
+        }
+
+        // Refracted Ray
+        if (hitMaterial->GetTransmission() > 0)
+        {
+            // refracted colour
+        }
+
+        // Calculate weights
+        const double m = hitMaterial->GetMetallic();
+        const double t = hitMaterial->GetTransmission();
+
+        const double diffuseWeight = (1 - m) * (1 - t);
+        const double reflectionWeight = m + (1 - m) * (1 - hitMaterial->GetRoughness());
+        const double refractionWeight = t;
+
+        const double sum = diffuseWeight + reflectionWeight + refractionWeight;
+
+        Colour addedColour = diffuseWeight * diffuseColour + reflectionWeight * reflectedColour;
+
+        return addedColour / sum;
     }
 
     // Background colour
@@ -161,7 +189,7 @@ void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Ge
             upperBound,
             std::ref(finishedThreads)
         );
-        }
+    }
 
     while (finishedThreads < nThreads && running)
     {
