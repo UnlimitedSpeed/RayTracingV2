@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <chrono>
 
 #include "Camera.h"
 #include "Geometry/Object.h"
@@ -106,11 +107,23 @@ Vec3 Camera::SampleSquare()
     return Vec3(random_double() - 0.1, random_double() - 0.1, 0);
 }
 
-void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, bool &running)
+void Camera::DrawBuffer(SDL_Renderer *renderer, const std::vector<Colour> &colourBuffer) const
 {
     for (int h = 0; h < imageHeight; h++)
     {
-        std::clog << "\rScanlines remaining: " << (imageHeight - h) << std::flush;
+        for (int w = 0; w < imageWidth; w++)
+        {
+            const auto colour = colourBuffer[h * imageWidth + w].GetColourToWrite();
+            SDL_SetRenderDrawColor(renderer, colour[0], colour[1], colour[2], 255);
+            SDL_RenderDrawPoint(renderer, w, h);
+        }
+    }
+}
+
+void Camera::ThreadColour(const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, std::vector<Colour> &colourBuffer, const int lowerBound, const int upperBound, std::atomic<int> &finishedThreads)
+{
+    for (int h = lowerBound; h < upperBound; h++)
+    {
         for (int w = 0; w < imageWidth; w++)
         {
             Colour pixelColour(0, 0, 0);
@@ -120,12 +133,39 @@ void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Ge
                 pixelColour += RayColour(ray, objs, lights, 0);
             }
             pixelColour = pixelColour / samples_per_pixel;
-            auto colour = pixelColour.GetColourToWrite();
+            colourBuffer[h * imageWidth + w] = pixelColour;
+        }
+    }
+    finishedThreads++;
+}
 
-            SDL_SetRenderDrawColor(renderer, colour[0], colour[1], colour[2], 255);
-            SDL_RenderDrawPoint(renderer, w, h);
+void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, bool &running)
+{
+    const int nThreads = 16;
+    const int dividedHeight = imageHeight / nThreads;
+    std::vector<std::thread> threads;
+    std::vector<Colour> colourBuffer(imageHeight * imageWidth);
+    std::atomic<int> finishedThreads{0};
+
+    for (int i = 0; i < nThreads; i++)
+    {
+        const int lowerBound = dividedHeight * i;
+        const int upperBound = (i == nThreads - 1) ? imageHeight : dividedHeight * (i + 1);
+        threads.emplace_back(
+            &Camera::ThreadColour,
+            this,
+            std::ref(objs),
+            std::ref(lights),
+            std::ref(colourBuffer),
+            lowerBound,
+            upperBound,
+            std::ref(finishedThreads)
+        );
         }
 
+    while (finishedThreads < nThreads && running)
+    {
+        DrawBuffer(renderer, colourBuffer);
         SDL_RenderPresent(renderer);
 
         SDL_Event event;
@@ -134,8 +174,21 @@ void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Ge
             if (event.type == SDL_QUIT)
                 running = false;
         }
-        if (!running)
-            return;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
+
+    for (auto &t : threads)
+    {
+        if (t.joinable())
+            t.join();
+    }
+
+    if (running)
+    {
+        DrawBuffer(renderer, colourBuffer);
+        SDL_RenderPresent(renderer);
+    }
+
     std::clog << "\nDone.\n";
 }

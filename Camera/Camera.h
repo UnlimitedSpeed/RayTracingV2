@@ -8,6 +8,7 @@
 #include "helper/Colour.h"
 #include "helper/HitData.h"
 #include <memory>
+#include <atomic>
 
 namespace Geometry
 {
@@ -36,14 +37,24 @@ private:
     const double MAX_INTERVAL = INFINITY;
 
     Vec3 SampleSquare();
+    void DrawBuffer(SDL_Renderer *renderer, const std::vector<Colour> &colourBuffer) const;
+    void ThreadColour(
+        const std::vector<std::unique_ptr<Geometry::Object>> &objs,
+        const std::vector<Vec3> &lights,
+        std::vector<Colour> &colourBuffer,
+        int lowerBound,
+        int upperBound,
+        std::atomic<int> &finishedThreads
+    );
+
 public:
     Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight);
     ~Camera() {};
 
-    bool HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, HitData &hitData);
-    Colour RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights, int depth = 0);
+    bool HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>> &objs, HitData &hitData);
+    Colour RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, int depth = 0);
     Ray GetRay(int h, int w);
-    void Render(SDL_Renderer* renderer, const std::vector<std::unique_ptr<Geometry::Object>>& objs, const std::vector<Vec3>& lights, bool& running);
+    void Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, bool &running);
 };
 
 #endif

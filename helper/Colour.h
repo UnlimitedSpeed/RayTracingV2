@@ -24,7 +24,7 @@ public:
     double g() const { return colour[1]; }
     double b() const { return colour[2]; }
 
-    std::vector<int> GetColourToWrite()
+    std::vector<int> GetColourToWrite() const
     {
         return {ToByte(colour[0]), ToByte(colour[1]), ToByte(colour[2])};
     }
