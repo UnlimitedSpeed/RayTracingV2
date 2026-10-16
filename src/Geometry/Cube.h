@@ -21,18 +21,20 @@ namespace Geometry
             vertices.push_back({position.x() + t, position.y() + t, position.z() - t});
             vertices.push_back({position.x() - t, position.y() + t, position.z() - t});
 
-            triangles.push_back(Triangle(vertices[0], vertices[1], vertices[2]));
-            triangles.push_back(Triangle(vertices[0], vertices[2], vertices[3]));
-            triangles.push_back(Triangle(vertices[4], vertices[0], vertices[3]));
-            triangles.push_back(Triangle(vertices[4], vertices[3], vertices[7]));
-            triangles.push_back(Triangle(vertices[3], vertices[2], vertices[6]));
-            triangles.push_back(Triangle(vertices[3], vertices[6], vertices[7]));
-            triangles.push_back(Triangle(vertices[1], vertices[5], vertices[6]));
-            triangles.push_back(Triangle(vertices[1], vertices[6], vertices[2]));
-            triangles.push_back(Triangle(vertices[0], vertices[4], vertices[5]));
-            triangles.push_back(Triangle(vertices[0], vertices[5], vertices[1]));
-            triangles.push_back(Triangle(vertices[5], vertices[4], vertices[7]));
-            triangles.push_back(Triangle(vertices[5], vertices[7], vertices[6]));
+            std::array<std::array<int, 6>, 6> faceIndices = {{
+                {0, 1, 2, 0, 2, 3}, // Back face
+                {4, 5, 6, 4, 6, 7}, // Front face
+                {0, 4, 7, 0, 7, 3}, // Left face
+                {1, 5, 6, 1, 6, 2}, // Right face
+                {3, 2, 6, 3, 6, 7}, // Top face
+                {0, 1, 5, 0, 5, 4}  // Bottom face
+            }};
+
+            for (const auto& indices : faceIndices)
+            {
+                triangles.push_back(Triangle(vertices[indices[0]], vertices[indices[1]], vertices[indices[2]]));
+                triangles.push_back(Triangle(vertices[indices[3]], vertices[indices[4]], vertices[indices[5]]));
+            }
         }
     };
 }

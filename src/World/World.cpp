@@ -5,6 +5,7 @@
 #include "src/Geometry/Structs.h"
 #include "src/Geometry/Cube.h"
 #include "src/Geometry/Sphere.h"
+#include "src/Geometry/CubeSphere.h"
 #include "src/Geometry/TriangleObject.h"
 
 using json = nlohmann::json;
@@ -127,7 +128,7 @@ void World::CreateSphere(const json object)
         std::cerr << "Missing radius for Sphere\n";
         return;
     }
-    const int radius = object["radius"].get<int>();
+    const double radius = object["radius"].get<double>();
 
     if (!object.contains("sides"))
     {
@@ -150,6 +151,42 @@ void World::CreateSphere(const json object)
     }
 
     objectsInWorld.push_back(std::make_unique<Geometry::Sphere>(pos, radius, sides, height, materialsMap.at(mat).get()));
+}
+
+void World::CreateCubicSphere(const json object)
+{
+    if (!object.contains("position"))
+    {
+        std::cerr << "Missing position for CubeSphere\n";
+        return;
+    }
+    const Vec3 pos = Vec3(
+        object["position"][0].get<double>(),
+        object["position"][1].get<double>(),
+        object["position"][2].get<double>()
+    );
+
+    if (!object.contains("radius"))
+    {
+        std::cerr << "Missing radius for CubeSphere\n";
+        return;
+    }
+    const double radius = object["radius"].get<double>();
+
+    if (!object.contains("subdivisions"))
+    {
+        std::cerr << "Missing subdivisions for CubeSphere\n";
+        return;
+    }
+    const int subdivisions = object["subdivisions"].get<int>();
+
+    std::string mat = "default";
+    if (object.contains("material"))
+    {
+        mat = object["material"];
+    }
+
+    objectsInWorld.push_back(std::make_unique<Geometry::CubeSphere>(pos, radius, subdivisions, materialsMap.at(mat).get()));
 }
 
 void World::CreateTriangle(const json object)
@@ -213,6 +250,9 @@ void World::CreateObjects(const json objs)
             break;
         case Geometry::Types::Sphere:
             CreateSphere(obj);
+            break;
+        case Geometry::Types::CubeSphere:
+            CreateCubicSphere(obj);
             break;
         case Geometry::Types::Triangle:
             CreateTriangle(obj);

@@ -5,7 +5,8 @@ namespace Geometry
         Unknown,
         Triangle,
         Cube,
-		Sphere
+		Sphere,
+		CubeSphere
     };
 
     struct TypesConvertion {
@@ -14,6 +15,7 @@ namespace Geometry
 			if (value == "triangle") return Types::Triangle;
 			if (value == "cube") return Types::Cube;
 			if (value == "sphere") return Types::Sphere;
+			if (value == "cubic_sphere") return Types::CubeSphere;
 			return Types::Unknown;
 		}
 	};

@@ -32,11 +32,10 @@
     "objects":
     [
         {
-            "type": "sphere",
+            "type": "cubic_sphere",
             "position": [0, 5, -7],
             "radius": 2,
-            "sides": 10,
-            "height": 10,
+            "subdivisions": 10,
             "material": "RedSolid"
         },
         {
