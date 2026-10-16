@@ -5,7 +5,7 @@
             "id": "RedSolid",
             "colour": [255, 0, 0],
             "metallic": 0,
-            "roughness": 1,
+            "roughness": 0.9,
             "transmission": 0
         },
         {
@@ -26,30 +26,18 @@
     "lights":
     [
         {
-            "position": [0, 15, -10]
+            "position": [0, 5, 0]
         }
     ],
     "objects":
     [
         {
             "type": "sphere",
-            "position": [0, 5, -20],
-            "radius": 5,
-            "sides": 25,
-            "height": 25,
+            "position": [0, 5, -7],
+            "radius": 2,
+            "sides": 10,
+            "height": 10,
             "material": "RedSolid"
-        },
-        {
-            "type": "cube",
-            "position": [5, 1.5, -10],
-            "size": 3,
-            "material": "RedSolid"
-        },
-        {
-            "type": "cube",
-            "position": [-5, 1.5, -10],
-            "size": 3,
-            "material": "GreenSolid"
         },
         {
             "type": "cube",

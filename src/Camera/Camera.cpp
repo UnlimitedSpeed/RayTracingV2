@@ -167,7 +167,7 @@ void Camera::ThreadColour(const std::vector<std::unique_ptr<Geometry::Object>> &
     finishedThreads++;
 }
 
-void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, bool &running)
+void Camera::Render(SDL_Renderer *renderer, const World &world, bool &running)
 {
     const int nThreads = 4;
     const int dividedHeight = imageHeight / nThreads;
@@ -182,8 +182,8 @@ void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Ge
         threads.emplace_back(
             &Camera::ThreadColour,
             this,
-            std::ref(objs),
-            std::ref(lights),
+            std::ref(world.GetObjects()),
+            std::ref(world.GetLights()),
             std::ref(colourBuffer),
             lowerBound,
             upperBound,

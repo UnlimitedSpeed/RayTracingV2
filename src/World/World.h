@@ -1,3 +1,6 @@
+#ifndef WORLD_HPP
+#define WORLD_HPP
+
 #include <map>
 #include <memory>
 #include <nlohmann/json.hpp>
@@ -14,7 +17,7 @@ namespace Geometry
     struct TypesConvertion;    
 }
 
-class WorldParser
+class World
 {
 private:
     /* data */
@@ -24,10 +27,10 @@ private:
     std::vector<Vec3> lightsInWorld;
 
 public:
-    WorldParser() {};
+    World() {};
 
-    const std::vector<std::unique_ptr<Geometry::Object>>& GetObjectsInWorld() const { return objectsInWorld; };
-    const std::vector<Vec3>& GetLightsInWorld() const { return lightsInWorld; };
+    const std::vector<std::unique_ptr<Geometry::Object>>& GetObjects() const { return objectsInWorld; };
+    const std::vector<Vec3>& GetLights() const { return lightsInWorld; };
 
     void CreateMaterials(nlohmann::json materials);
     void CreateLights(nlohmann::json lights);
@@ -37,3 +40,5 @@ public:
     void CreateObjects(nlohmann::json objs);
     void CreateWorld(std::string fileName);
 };
+
+#endif

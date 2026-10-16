@@ -3,7 +3,7 @@
 
 #include "src/Camera/Camera.h"
 #include "src/Geometry/Cube.h"
-#include "src/WorldParser/WorldParser.h"
+#include "src/World/World.h"
 #include <iostream>
 
 int main(int argc, char** argv)
@@ -25,12 +25,12 @@ int main(int argc, char** argv)
 
     Camera camera = Camera(aspectRatio, imageWidth, 1.0, 2.0);
 
-    WorldParser wp = WorldParser();
+    World world = World();
 
-    wp.CreateWorld("test1.json");
+    world.CreateWorld("test1.json");
 
     bool running = true;
-    camera.Render(renderer, wp.GetObjectsInWorld(), wp.GetLightsInWorld(), running);
+    camera.Render(renderer, world, running);
 
     while (running)
     {
@@ -44,7 +44,6 @@ int main(int argc, char** argv)
     //SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    std::cout << "Hello World!\n";
 
     return 0;
 }

@@ -7,6 +7,7 @@
 #include "src/helper/Ray.h"
 #include "src/helper/Colour.h"
 #include "src/helper/HitData.h"
+#include "src/World/World.h"
 #include <memory>
 #include <atomic>
 
@@ -52,9 +53,9 @@ public:
     ~Camera() {};
 
     bool HitInterval(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>> &objs, HitData &hitData);
-    Colour RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, int depth = 0);
+    Colour RayColour(const Ray &ray, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, int depth);
     Ray GetRay(int h, int w);
-    void Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, bool &running);
+    void Render(SDL_Renderer *renderer, const World &world, bool &running);
 };
 
 #endif

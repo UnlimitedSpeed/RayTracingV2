@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include "WorldParser.h"
+#include "World.h"
 #include "src/Geometry/Structs.h"
 #include "src/Geometry/Cube.h"
 #include "src/Geometry/Sphere.h"
@@ -9,7 +9,7 @@
 
 using json = nlohmann::json;
 
-void WorldParser::CreateMaterials(nlohmann::json materials)
+void World::CreateMaterials(nlohmann::json materials)
 {
     materialsMap.emplace("default", std::make_unique<Material>());
 
@@ -61,7 +61,7 @@ void WorldParser::CreateMaterials(nlohmann::json materials)
     }
 }
 
-void WorldParser::CreateLights(const json lights)
+void World::CreateLights(const json lights)
 {
     for (auto light : lights)
     {
@@ -80,7 +80,7 @@ void WorldParser::CreateLights(const json lights)
     }
 }
 
-void WorldParser::CreateCube(const json object)
+void World::CreateCube(const json object)
 {
     if (!object.contains("position"))
     {
@@ -109,7 +109,7 @@ void WorldParser::CreateCube(const json object)
     objectsInWorld.push_back(std::make_unique<Geometry::Cube>(pos, size, materialsMap.at(mat).get()));
 }
 
-void WorldParser::CreateSphere(const json object)
+void World::CreateSphere(const json object)
 {
     if (!object.contains("position"))
     {
@@ -152,7 +152,7 @@ void WorldParser::CreateSphere(const json object)
     objectsInWorld.push_back(std::make_unique<Geometry::Sphere>(pos, radius, sides, height, materialsMap.at(mat).get()));
 }
 
-void WorldParser::CreateTriangle(const json object)
+void World::CreateTriangle(const json object)
 {
     if (!object.contains("vertices"))
     {
@@ -195,7 +195,7 @@ void WorldParser::CreateTriangle(const json object)
     ));
 }
 
-void WorldParser::CreateObjects(const json objs)
+void World::CreateObjects(const json objs)
 {
     for (auto obj : objs)
     {
@@ -223,7 +223,7 @@ void WorldParser::CreateObjects(const json objs)
     }
 }
 
-void WorldParser::CreateWorld(const std::string fileName)
+void World::CreateWorld(const std::string fileName)
 {
     const auto fullName = WORLDS_FOLDER + fileName;
     std::ifstream f(fullName);
