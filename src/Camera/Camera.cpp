@@ -3,8 +3,8 @@
 #include <chrono>
 
 #include "Camera.h"
-#include "Geometry/Object.h"
-#include "helper/Utils.h"
+#include "src/Geometry/Object.h"
+#include "src/helper/Utils.h"
 
 #include <thread>
 
@@ -143,7 +143,7 @@ void Camera::DrawBuffer(SDL_Renderer *renderer, const std::vector<Colour> &colou
         {
             const auto colour = colourBuffer[h * imageWidth + w].GetColourToWrite();
             SDL_SetRenderDrawColor(renderer, colour[0], colour[1], colour[2], 255);
-            SDL_RenderDrawPoint(renderer, w, h);
+            SDL_RenderPoint(renderer, w, h);
         }
     }
 }
@@ -169,7 +169,7 @@ void Camera::ThreadColour(const std::vector<std::unique_ptr<Geometry::Object>> &
 
 void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Geometry::Object>> &objs, const std::vector<Vec3> &lights, bool &running)
 {
-    const int nThreads = 16;
+    const int nThreads = 4;
     const int dividedHeight = imageHeight / nThreads;
     std::vector<std::thread> threads;
     std::vector<Colour> colourBuffer(imageHeight * imageWidth);
@@ -199,7 +199,7 @@ void Camera::Render(SDL_Renderer *renderer, const std::vector<std::unique_ptr<Ge
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_QUIT)
+            if (event.type == SDL_EVENT_QUIT)
                 running = false;
         }
 

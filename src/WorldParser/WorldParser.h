@@ -3,8 +3,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-#include "Material/Material.h"
-#include "helper/Vec3.h"
+ #include "src/Material/Material.h"
+#include "src/helper/Vec3.h"
 
 namespace Geometry
 {

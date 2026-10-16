@@ -2,11 +2,11 @@
 #define CAMERA_HPP
 
 #include <vector>
-#include <SDL2/SDL.h>
-#include "helper/Vec3.h"
-#include "helper/Ray.h"
-#include "helper/Colour.h"
-#include "helper/HitData.h"
+#include <SDL3/SDL.h>
+#include "src/helper/Vec3.h"
+#include "src/helper/Ray.h"
+#include "src/helper/Colour.h"
+#include "src/helper/HitData.h"
 #include <memory>
 #include <atomic>
 

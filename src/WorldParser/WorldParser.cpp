@@ -2,10 +2,10 @@
 #include <iostream>
 #include <memory>
 #include "WorldParser.h"
-#include "Geometry/Structs.h"
-#include "Geometry/Cube.h"
-#include "Geometry/Sphere.h"
-#include "Geometry/TriangleObject.h"
+#include "src/Geometry/Structs.h"
+#include "src/Geometry/Cube.h"
+#include "src/Geometry/Sphere.h"
+#include "src/Geometry/TriangleObject.h"
 
 using json = nlohmann::json;
 

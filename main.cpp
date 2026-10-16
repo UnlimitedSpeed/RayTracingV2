@@ -1,9 +1,10 @@
 #include <vector>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
-#include "Camera/Camera.h"
-#include "Geometry/Cube.h"
-#include "WorldParser.h"
+#include "src/Camera/Camera.h"
+#include "src/Geometry/Cube.h"
+#include "src/WorldParser/WorldParser.h"
+#include <iostream>
 
 int main(int argc, char** argv)
 {
@@ -15,7 +16,7 @@ int main(int argc, char** argv)
     SDL_Renderer* renderer = nullptr;
 
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_CreateWindowAndRenderer(imageWidth, imageWidth/aspectRatio, 0, &window, &renderer);
+    SDL_CreateWindowAndRenderer("main", imageWidth, imageWidth/aspectRatio, 0, &window, &renderer);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -26,7 +27,7 @@ int main(int argc, char** argv)
 
     WorldParser wp = WorldParser();
 
-    wp.CreateWorld(argv[1]);
+    wp.CreateWorld("test1.json");
 
     bool running = true;
     camera.Render(renderer, wp.GetObjectsInWorld(), wp.GetLightsInWorld(), running);
@@ -36,14 +37,14 @@ int main(int argc, char** argv)
         SDL_Event event;
         if (!SDL_WaitEvent(&event))
             break;
-        if (event.type == SDL_QUIT)
+        if (event.type == SDL_EVENT_QUIT)
             running = false;
     }
 
-    SDL_DestroyRenderer(renderer);
+    //SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
+    std::cout << "Hello World!\n";
 
     return 0;
 }

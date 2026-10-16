@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "helper/Ray.h"
-#include "helper/HitData.h"
-#include "helper/Vec3.h"
+#include "src/helper/Ray.h"
+#include "src/helper/HitData.h"
+#include "src/helper/Vec3.h"
 
 namespace Geometry
 {

@@ -2,11 +2,11 @@
 #define OBJECT_HPP
 
 #include <vector>
-#include "Geometry/Triangle.h"
-#include "helper/Vec3.h"
-#include "helper/Ray.h"
-#include "helper/HitData.h"
-#include "Material/Material.h"
+#include "src/Geometry/Triangle.h"
+#include "src/helper/Vec3.h"
+#include "src/helper/Ray.h"
+#include "src/helper/HitData.h"
+#include "src/Material/Material.h"
 
 namespace Geometry
 {

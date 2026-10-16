@@ -1,4 +1,4 @@
-#include "helper/Colour.h"
+#include "src/helper/Colour.h"
 
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
