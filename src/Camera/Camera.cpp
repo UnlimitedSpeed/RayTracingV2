@@ -169,7 +169,7 @@ void Camera::ThreadColour(const std::vector<std::unique_ptr<Geometry::Object>> &
 
 void Camera::Render(SDL_Renderer *renderer, const World &world, bool &running)
 {
-    const int nThreads = 4;
+    const int nThreads = 1;
     const int dividedHeight = imageHeight / nThreads;
     std::vector<std::thread> threads;
     std::vector<Colour> colourBuffer(imageHeight * imageWidth);

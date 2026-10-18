@@ -153,7 +153,7 @@ void World::CreateSphere(const json object)
     objectsInWorld.push_back(std::make_unique<Geometry::Sphere>(pos, radius, sides, height, materialsMap.at(mat).get()));
 }
 
-void World::CreateCubicSphere(const json object)
+void World::CreateCubeSphere(const json object)
 {
     if (!object.contains("position"))
     {
@@ -252,7 +252,7 @@ void World::CreateObjects(const json objs)
             CreateSphere(obj);
             break;
         case Geometry::Types::CubeSphere:
-            CreateCubicSphere(obj);
+            CreateCubeSphere(obj);
             break;
         case Geometry::Types::Triangle:
             CreateTriangle(obj);

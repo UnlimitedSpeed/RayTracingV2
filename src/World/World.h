@@ -36,7 +36,7 @@ public:
     void CreateLights(nlohmann::json lights);
     void CreateCube(nlohmann::json object);
     void CreateSphere(nlohmann::json object);
-    void CreateCubicSphere(nlohmann::json object);
+    void CreateCubeSphere(nlohmann::json object);
     void CreateTriangle(nlohmann::json object);
     void CreateObjects(nlohmann::json objs);
     void CreateWorld(std::string fileName);
